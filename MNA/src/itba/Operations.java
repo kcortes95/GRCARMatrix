@@ -7,7 +7,8 @@ public class Operations {
 	
 	public static final String QMATRIX = "Q";
 	public static final String RMATRIX = "R";
-
+	public static final int ITERATIONS = 10000;
+	
 	public static double dotProduct(double[] v1, double[] v2) {
 
 		if (v1.length != v2.length)
