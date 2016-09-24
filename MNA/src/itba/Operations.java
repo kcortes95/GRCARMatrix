@@ -1,7 +1,10 @@
 package itba;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
 
 public class Operations {
 	
@@ -78,7 +81,40 @@ public class Operations {
 		ret.put("R", R);
 		return ret;
 	}
+	public static List<Complex> getValues(Matrix m){
+		List<Complex> val = new ArrayList<>();
+		for (int i = 0; i < m.cols - (m.cols % 2); i += 2) {
+			double[][] aux = new double[2][2];
+			aux[0][0] = m.getInPosition(i, i);
+			aux[0][1] = m.getInPosition(i, i+1);
+			aux[1][0] = m.getInPosition(i+1, i);
+			aux[1][1] = m.getInPosition(i+1, i+1);
+			val.addAll(roots(1, -aux[0][0] - aux[1][1], determinant(aux)));
+		}
+		if (m.cols % 2 == 1) {
+			val.add(new Complex(m.getInPosition(m.fil-1, m.cols -1), 0));
+		} 
+		return val;
+	}
 	
+	private static List<Complex> roots(double a, double b, double c) {
+		List<Complex> res = new ArrayList<Complex>();
+		double x = (b * b) - (4 * a * c);
+		if (x > 0) {
+			res.add(0, new Complex(((-b + Math.sqrt(x)) / 2 * a), 0));
+			res.add(1, new Complex(((-b - Math.sqrt(x)) / 2 * a), 0));
+		} else {
+			res.add(0, new Complex(-b / (2 * a), Math.sqrt(Math.abs(x))
+					/ (2 * a)));
+			res.add(1, new Complex(res.get(0)));
+		}
+		return res;
+	}
+
+	private static double determinant(double[][] m) {
+		return m[0][0]*m[1][1]-m[0][1]*m[1][0];
+	}
+
 	public static double truncateDouble(double n){
 		return truncateDouble(n,4);
 	}
