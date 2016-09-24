@@ -66,7 +66,7 @@ public class Matrix {
 			throw new RuntimeException("Not valid vector");
 
 		for (int i = 0; i < fil; i++) {
-			matrix[i][position - 1] = truncateDouble(v[i]);
+			matrix[i][position - 1] = Operations.truncateDouble(v[i]);
 		}
 	}
 
@@ -77,15 +77,10 @@ public class Matrix {
 		if (cols < 0 || cols > this.cols)
 			throw new RuntimeException("Cols doesnt match");
 		
-		matrix[fil][cols]= truncateDouble(number);
+		matrix[fil][cols]= Operations.truncateDouble(number);
 
 	}
 	
-	public double truncateDouble(double n){
-		double number = n;
-		int aux = (int) (number * 10000);// 1243
-		double result = aux / 10000d;// 12.43
-		return result;
-	}
+
 
 }

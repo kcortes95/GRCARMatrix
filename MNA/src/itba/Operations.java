@@ -84,5 +84,21 @@ public class Operations {
 			System.out.println(v);
 		}
 	}
+	
+	public static double truncateDouble(double n){
+		return truncateDouble(n,4);
+	}
+	
+	public static double truncateDouble(double n, int digits){
+		
+		if(digits<=0)
+			throw new RuntimeException("Invalid digit");
+		
+		double digit = Math.pow(10, digits);
+		double number = n;
+		int aux = (int) (number * digit);// 1243
+		double result = aux / digit;// 12.43
+		return result;
+	}
 
 }
