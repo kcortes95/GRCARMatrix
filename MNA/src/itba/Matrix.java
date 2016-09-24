@@ -33,11 +33,7 @@ public class Matrix {
 	}
 
 	private void fill() {
-		for (int i = 0; i < fil; i++) {
-			for (int j = 0; j < cols; j++) {
-				matrix[i][j] = 0;
-			}
-		}
+		fill(0);
 	}
 	
 	private void fill(int n) {
