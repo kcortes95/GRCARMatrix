@@ -58,13 +58,13 @@ public class Operations {
 				
 		for (int i = 1; i <= m.cols; i++) {
 			
-			double[] v = m.getVector(i);
+			double[] v = m.getVectorByCol(i);
 						
 			double[] emonio = v;
 
 			for (int j = 1; j < i; j++) {
-				double prodInter = Operations.dotProduct(v, Q.getVector(j));
-				double[] vaux = Operations.alphaProduct(Q.getVector(j), prodInter*-1);
+				double prodInter = Operations.dotProduct(v, Q.getVectorByCol(j));
+				double[] vaux = Operations.alphaProduct(Q.getVectorByCol(j), prodInter*-1);
 				emonio = Operations.sum(emonio, vaux);
 				R.setInPosition(prodInter, j-1, i-1);
 			}
@@ -76,13 +76,6 @@ public class Operations {
 		ret.put("Q", Q);
 		ret.put("R", R);
 		return ret;
-	}
-	
-	private static void printVector(double[] vector){
-		System.out.println("IMPRIMO VECTOR: ");
-		for(double v: vector){
-			System.out.println(v);
-		}
 	}
 	
 	public static double truncateDouble(double n){
@@ -99,6 +92,24 @@ public class Operations {
 		int aux = (int) (number * digit);// 1243
 		double result = aux / digit;// 12.43
 		return result;
+	}
+	
+	public static Matrix crossProduct(Matrix a, Matrix b){
+		if(a.cols != b.fil)
+			throw new RuntimeException("cols and fil doesnt match");
+		
+		Matrix ret = new Matrix(a.fil, b.cols);
+		
+		for(int i = 0 ; i < ret.fil ; i++){
+			for(int j = 0 ; j < ret.cols ; j++){
+				double[] v1 = a.getVectorByFil(i+1);
+				double[] v2 = b.getVectorByCol(j+1);
+				double number = Operations.dotProduct(v1, v2);
+				ret.setInPosition(number, i, j);
+			}
+		}
+		return ret;
+	
 	}
 
 }

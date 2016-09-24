@@ -26,7 +26,7 @@ public class Matrix {
 	public void print() {
 		for (int i = 0; i < fil; i++) {
 			for (int j = 0; j < cols; j++) {
-				System.out.print("\t" + matrix[i][j] + "\t");
+				System.out.print("\t" + Operations.truncateDouble(matrix[i][j]) + "\t");
 			}
 			System.out.println("");
 		}
@@ -44,7 +44,7 @@ public class Matrix {
 		}
 	}
 
-	public double[] getVector(int col) {
+	public double[] getVectorByCol(int col) {
 		if (col <= 0 || col > cols)
 			throw new RuntimeErrorException(null, "Invalid argument passed");
 
@@ -58,6 +58,20 @@ public class Matrix {
 
 	}
 
+	public double[] getVectorByFil(int fils) {
+		if (fils <= 0 || fils > this.fil)
+			throw new RuntimeErrorException(null, "Invalid argument passed");
+
+		double[] array = new double[cols];
+
+		for (int i = 0; i < cols; i++) {
+			array[i] = matrix[fils-1][i];
+		}
+		
+		return array;
+
+	}
+	
 	public void setVector(double[] v, int position) {
 		if (position <= 0 || position > cols)
 			throw new IllegalArgumentException("Not valid position");
@@ -66,7 +80,7 @@ public class Matrix {
 			throw new RuntimeException("Not valid vector");
 
 		for (int i = 0; i < fil; i++) {
-			matrix[i][position - 1] = Operations.truncateDouble(v[i]);
+			matrix[i][position - 1] = v[i];
 		}
 	}
 
@@ -77,8 +91,19 @@ public class Matrix {
 		if (cols < 0 || cols > this.cols)
 			throw new RuntimeException("Cols doesnt match");
 		
-		matrix[fil][cols]= Operations.truncateDouble(number);
+		matrix[fil][cols]= number;
 
+	}
+	
+	public double getInPosition(int fil, int cols) {
+		if (fil < 0 || fil > this.fil)
+			throw new RuntimeException("Fil doesnt match");
+		
+		if (cols < 0 || cols > this.cols)
+			throw new RuntimeException("Cols doesnt match");
+		
+		return matrix[fil][cols];
+		
 	}
 	
 
