@@ -1,39 +1,29 @@
 package itba;
 
-public class GRCARMatrix {
 
-	int n = 0;
-	int[][] matrix = null;
+public class GRCARMatrix extends Matrix {
 
 	public GRCARMatrix(int num) {
-		this.n = num;
-		matrix = new int[num][num];
-		fill();
-	}
-
-	public void print() {
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < n; j++) {
-				if (i == j + 1) 
-					System.out.print(" " + matrix[i][j] + "  ");
-				else
-					System.out.print("  " + matrix[i][j] + "  ");
-			}
-			System.out.println("");
-		}
+		super(num,num);
+		this.fill();
 	}
 
 	private void fill() {
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < n; j++) {
-				if (i <= j && i != j + 1)
+		int l = 3;
+		for (int i = 0; i < super.fil; i++) {
+			for (int j = 0; j < super.cols; j++) {
+				// | -> alt + 124
+				if (i == j || (j > i && j <= (i + l))) {
 					matrix[i][j] = 1;
-				else if (i == j + 1) 
+				} else if (i == (j + 1)) {
 					matrix[i][j] = -1;
-				else
+				} else {
 					matrix[i][j] = 0;
+				}
 			}
 		}
 	}
+	
+
 
 }
