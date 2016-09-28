@@ -1,15 +1,15 @@
 package itba;
 
-import java.util.List;
+import java.util.Set;
 
 public class Main {
 
 	public static void main(String[] args) {
-
-		Matrix m = new GRCARMatrix(10);
-		Matrix m2 = new Matrix(3,3);
-		for(int i = 0; i<9;i++){
-			m2.matrix[i/3][i%3] = i+1;
+		int x = 100;
+		Matrix m = new GRCARMatrix(x);
+		Matrix m2 = new Matrix(5,5);
+		for(int i = 0; i<25;i++){
+			m2.matrix[i/5][i%5] = i+1;
 		}
 		
 		System.out.println("Matrix GRCAR " + m.fil + "x" + m.cols);
@@ -17,11 +17,22 @@ public class Main {
 		System.out.println("Applying QR Method " + Operations.ITERATIONS + " times");
 		Matrix q = null;
 		Matrix r = null;
-		for (int i = 0; i < 10000; i++) {
+		Matrix aux = null;
+		boolean flag = true;
+		int i;
+		for (i = 0; i < Operations.ITERATIONS && flag; i++) {
+			aux = m;
 			q = Operations.calculateQR(m).get(Operations.QMATRIX);
 			r = Operations.calculateQR(m).get(Operations.RMATRIX);
 			m = Operations.crossProduct(r, q);
+			if((i % x) == 0){
+				System.out.println(i);
+				if (Operations.getValues(m).equals(Operations.getValues(aux))){
+					flag = false;
+				}
+			}
 		}
+		System.out.println(i);
 		System.out.println("-----------------");
 		m.print();
 		System.out.println("-----------------");
@@ -30,12 +41,14 @@ public class Main {
 		q.print();
 		System.out.println("-----------------");
 		System.out.println("-----------------");
-		List<Complex> l = Operations.getValues(m);
+		Set<Complex> l = Operations.getValues(m);
 		
-		for(int i = 0; i<l.size();i++){
-			System.out.println(l.get(i));
+		for(Complex c :l){
+			System.out.println(c);
 		}
 		
 	}
+	
+	
 
 }

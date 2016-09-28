@@ -24,4 +24,19 @@ public class Complex {
 		public int hashCode(){
 			return (int)(i*31 + r*27);
 		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if(obj == null){
+				return false;
+			}
+			Complex c = (Complex) obj;
+			double epsilon = Math.pow(10, -6);
+			if(Math.abs(c.i-this.i) <= epsilon && Math.abs(c.r - this.r) <= epsilon){
+				return true;
+				
+			}
+			return false;
+				
+		}
 }

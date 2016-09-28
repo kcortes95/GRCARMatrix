@@ -2,15 +2,17 @@ package itba;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 public class Operations {
 	
 	public static final String QMATRIX = "Q";
 	public static final String RMATRIX = "R";
-	public static final int ITERATIONS = 10000;
+	public static final int ITERATIONS = 100000;
 	
 	public static double dotProduct(double[] v1, double[] v2) {
 
@@ -81,8 +83,9 @@ public class Operations {
 		ret.put("R", R);
 		return ret;
 	}
-	public static List<Complex> getValues(Matrix m){
-		List<Complex> val = new ArrayList<>();
+	
+	public static Set<Complex> getValues(Matrix m){
+		Set<Complex> val = new HashSet<>();
 		for (int i = 0; i < m.cols - (m.cols % 2); i += 2) {
 			double[][] aux = new double[2][2];
 			aux[0][0] = m.getInPosition(i, i);
