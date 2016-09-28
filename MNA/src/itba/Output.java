@@ -1,5 +1,7 @@
 package itba;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -12,6 +14,23 @@ public class Output {
 			for(Complex c: list){
 				out.write(Operations.truncateDouble(c.r,5) + "\t" + Operations.truncateDouble(c.i,5) + "\n");
 			}
+			out.close();
+		}catch (IOException e) {
+		    e.printStackTrace();
+		}
+	}
+	
+	public static void times(int n, long milis){
+		if(n == 5){
+			try{
+				PrintWriter pw = new PrintWriter("times.txt");
+				pw.close();
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+		}
+		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("times.txt", true)))) {
+			out.write(n + "\t" + milis + "\n");
 			out.close();
 		}catch (IOException e) {
 		    e.printStackTrace();

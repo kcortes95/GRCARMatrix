@@ -103,9 +103,11 @@ public class Matrix {
 			throw new RuntimeException("Cols doesnt match");
 		
 		return matrix[fil][cols];
-		
 	}
 	
+	public void transpose(){
+		
+	}
 
 
 }
