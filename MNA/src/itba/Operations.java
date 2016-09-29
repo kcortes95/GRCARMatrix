@@ -12,7 +12,7 @@ public class Operations {
 	
 	public static final String QMATRIX = "Q";
 	public static final String RMATRIX = "R";
-	public static final int ITERATIONS = 100000;
+	public static final int ITERATIONS = 10000;
 	
 	public static double dotProduct(double[] v1, double[] v2) {
 
@@ -84,6 +84,50 @@ public class Operations {
 		return ret;
 	}
 	
+	public static Map<String,Matrix> calculateQR2(final Matrix m){
+		Map<String,Matrix> ret = new HashMap<>();
+		Matrix Q = new Matrix(m.fil);
+		Matrix R = new Matrix(m);
+		
+		Matrix[] G = new Matrix[m.fil-1];
+		
+		for(int x=0; x<m.fil-1; x++){
+			double x1 = R.getInPosition(x, x);
+			double x3 = R.getInPosition(x+1, x);
+			double r = Math.sqrt(Math.pow(x1, 2)+Math.pow(x3,2));
+			double c = x1/r;
+			double s = -x3/r;
+			G[x] = new Matrix(m.fil, m.cols);
+			for(int i=0; i<m.fil; i++){
+				for(int j=0; j<m.cols; j++){
+					if(i==j){
+						if(i==x+1 || j==x){
+							G[x].setInPosition(c, i, j);
+						}else{
+							G[x].setInPosition(1, i, j);
+						}
+					}else{
+						if(i == x && j == x+1){
+							G[x].setInPosition(-s, i, j);
+						}else if(i == x+1 && j == x){
+							G[x].setInPosition(s, i, j);
+						}else{
+							G[x].setInPosition(0, i, j);
+						}
+					}
+				}
+			}
+			R = crossProduct(G[x], R);
+		}
+		for(int x=0; x<m.fil-1; x++){
+			Q = crossProduct(Q,G[x].transpose());
+		}
+		
+		ret.put("Q", Q);
+		ret.put("R", R);
+		return ret;
+	}
+	
 	public static Set<Complex> getValues(Matrix m){
 		Set<Complex> val = new HashSet<>();
 		for (int i = 0; i < m.cols - (m.cols % 2); i += 2) {
@@ -149,7 +193,6 @@ public class Operations {
 			}
 		}
 		return ret;
-	
 	}
 
 }

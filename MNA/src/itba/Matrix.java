@@ -6,7 +6,7 @@ public class Matrix {
 
 	int fil = 0;
 	int cols = 0;
-	double[][] matrix = null;
+	public double[][] matrix = null;
 
 	public Matrix(int fil, int cols) {
 		this.fil = fil;
@@ -15,11 +15,36 @@ public class Matrix {
 		fill();
 	}
 	
+	public Matrix(Matrix other){
+		this.fil = other.fil;
+		this.cols = other.cols;
+		this.matrix = new double[this.fil][this.cols];
+		for(int i=0; i<fil; i++){
+			for(int j=0; j<cols; j++){
+				this.matrix[i][j] = other.matrix[i][j];
+			}
+		}
+	}
+	
 	public Matrix(int fil, int cols, int n) {
 		this.fil = fil;
 		this.cols = cols;
 		matrix = new double[fil][cols];
 		fill(n);
+	}
+	
+	public Matrix(int n){
+		this.fil = n;
+		this.cols = n;
+		this.matrix = new double[n][n];
+		for(int i=0; i<fil; i++){
+			for(int j=0; j<cols; j++){
+				if(i==j)
+					this.matrix[i][j] = 1;
+				else
+					this.matrix[i][j] = 0;
+			}
+		}
 	}
 
 
@@ -105,8 +130,18 @@ public class Matrix {
 		return matrix[fil][cols];
 	}
 	
-	public void transpose(){
-		
+	public Matrix transpose(){
+		if (fil != cols){
+			throw new IllegalArgumentException("m != n");
+		}
+		for(int i=0; i<fil; i++){
+			for(int j=i; j<cols; j++){
+				double aux = matrix[i][j];
+				matrix[i][j] = matrix[j][i];
+				matrix[j][i] = aux;
+			}
+		}
+		return this;
 	}
 
 
