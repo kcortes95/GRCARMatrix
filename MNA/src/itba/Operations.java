@@ -12,7 +12,7 @@ public class Operations {
 	
 	public static final String QMATRIX = "Q";
 	public static final String RMATRIX = "R";
-	public static final int ITERATIONS = 10000;
+	public static final int ITERATIONS = 1000000;
 	
 	public static double dotProduct(double[] v1, double[] v2) {
 
@@ -84,12 +84,23 @@ public class Operations {
 		return ret;
 	}
 	
-	public static Map<String,Matrix> calculateQR2(final Matrix m){
-		Map<String,Matrix> ret = new HashMap<>();
-		Matrix Q = new Matrix(m.fil);
+	public static Matrix calculateQR2(final Matrix m){
+		//return calculateQR2rec(null, m, ITERATIONS);
+		return calculateQR2iter(m, ITERATIONS);
+	}
+	
+	public static Matrix calculateQR2rec(final Matrix prev, final Matrix m, int iter){
+		//caso base
+		if(iter<=0)
+			return m;
+		//poda
+		if(iter%m.fil==0 && prev!=null && Operations.getValues(prev).equals(Operations.getValues(m))){
+			System.out.println(Operations.ITERATIONS-iter);
+			return m;
+		}
 		Matrix R = new Matrix(m);
 		
-		Matrix[] G = new Matrix[m.fil-1];
+		double[][] g = new double[m.fil-1][2];
 		
 		for(int x=0; x<m.fil-1; x++){
 			double x1 = R.getInPosition(x, x);
@@ -97,35 +108,69 @@ public class Operations {
 			double r = Math.sqrt(Math.pow(x1, 2)+Math.pow(x3,2));
 			double c = x1/r;
 			double s = -x3/r;
-			G[x] = new Matrix(m.fil, m.cols);
-			for(int i=0; i<m.fil; i++){
-				for(int j=0; j<m.cols; j++){
-					if(i==j){
-						if(i==x+1 || j==x){
-							G[x].setInPosition(c, i, j);
-						}else{
-							G[x].setInPosition(1, i, j);
-						}
-					}else{
-						if(i == x && j == x+1){
-							G[x].setInPosition(-s, i, j);
-						}else if(i == x+1 && j == x){
-							G[x].setInPosition(s, i, j);
-						}else{
-							G[x].setInPosition(0, i, j);
-						}
-					}
-				}
+			g[x][0] = c;
+			g[x][1] = s;
+
+			for(int j=0;j<R.cols;j++){
+				double upper = R.getInPosition(x, j);
+				double lower = R.getInPosition(x+1, j);
+				R.setInPosition(c*upper-s*lower, x, j);
+				R.setInPosition(s*upper+c*lower, x+1, j);
 			}
-			R = crossProduct(G[x], R);
 		}
 		for(int x=0; x<m.fil-1; x++){
-			Q = crossProduct(Q,G[x].transpose());
+			for(int i=0; i<R.fil; i++){
+				double c = g[x][0];
+				double s = g[x][1];
+				double left = R.getInPosition(i, x);
+				double right = R.getInPosition(i, x+1);
+				R.setInPosition(left*c-right*s, i, x);
+				R.setInPosition(left*s+right*c, i, x+1);
+			}
 		}
-		
-		ret.put("Q", Q);
-		ret.put("R", R);
-		return ret;
+		return calculateQR2rec(m, R, iter-1);
+	}
+	
+	public static Matrix calculateQR2iter(Matrix m, int iter){
+		Matrix prev = null;
+		double[][] g = new double[m.fil-1][2];
+		while(iter>0){
+			for(int x=0; x<m.fil-1; x++){
+				double x1 = m.getInPosition(x, x);
+				double x3 = m.getInPosition(x+1, x);
+				double r = Math.sqrt(Math.pow(x1, 2)+Math.pow(x3,2));
+				double c = x1/r;
+				double s = -x3/r;
+				g[x][0] = c;
+				g[x][1] = s;
+
+				for(int j=0;j<m.cols;j++){
+					double upper = m.getInPosition(x, j);
+					double lower = m.getInPosition(x+1, j);
+					m.setInPosition(c*upper-s*lower, x, j);
+					m.setInPosition(s*upper+c*lower, x+1, j);
+				}
+			}
+			for(int x=0; x<m.fil-1; x++){
+				for(int i=0; i<m.fil; i++){
+					double c = g[x][0];
+					double s = g[x][1];
+					double left = m.getInPosition(i, x);
+					double right = m.getInPosition(i, x+1);
+					m.setInPosition(left*c-right*s, i, x);
+					m.setInPosition(left*s+right*c, i, x+1);
+				}
+			}
+			if(iter%m.fil==0 && prev!=null){
+				System.out.println(Operations.ITERATIONS-iter);
+				if(Operations.getValues(m).equals(Operations.getValues(prev))){
+					return m;
+				}
+			}
+			prev = new Matrix(m);
+			iter--;
+		}
+		return m;
 	}
 	
 	public static Set<Complex> getValues(Matrix m){
