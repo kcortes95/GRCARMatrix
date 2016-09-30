@@ -12,14 +12,11 @@ public class Main {
 		for(int i = 5; i<n; i++){
 			long start = System.currentTimeMillis();
 			Matrix m = new GRCARMatrix(i,x);
-			res = Operations.calculateQR2(m);
+			res = Operations.standardQR(m);
 			System.out.println("Size: " + i + " time: " + ((double)(System.currentTimeMillis()-start))/1000);
 		}
 
-
-
 		Set<Complex> l = Operations.getValues(res);
-		
 		for(Complex c :l){
 			System.out.println(c);
 		}

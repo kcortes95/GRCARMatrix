@@ -80,7 +80,26 @@ public class Operations {
 		}
 		return aux;
 	}
-
+	public static Matrix standardQR(Matrix m){
+		boolean flag = true;
+		Matrix aux = null;
+		long start = System.currentTimeMillis();
+		aux = m;
+		int i = 0;
+		for(i = 0; i<ITERATIONS && flag;i++){
+			Map<String,Matrix> qr = calculateQR(m);
+			m = Operations.crossProduct(qr.get("R"),qr.get("Q"));
+			if((i % m.cols) == 0){
+				if (Operations.getValues(m).equals(Operations.getValues(aux))){
+					Output.times(m.fil,System.currentTimeMillis() - start,i);
+					return m;
+				}
+				aux = m;
+			}
+		}
+		Output.times(m.fil,System.currentTimeMillis() - start,i);
+		return m;
+	}
 	/**
 	 * This method calculates the matrix Q and R using Gram-Schmidt
 	 * @param m the matrix to

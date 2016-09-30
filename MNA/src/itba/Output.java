@@ -23,7 +23,7 @@ public class Output {
 	public static void times(int n, long milis, int iters){
 		if(n == 5){
 			try{
-				PrintWriter pw = new PrintWriter("times.txt");
+				PrintWriter pw = new PrintWriter("times2.txt");
 				pw.close();
 			}catch (Exception e){
 				e.printStackTrace();
