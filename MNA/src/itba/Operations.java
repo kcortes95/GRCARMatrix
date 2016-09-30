@@ -1,5 +1,7 @@
 package itba;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,8 +14,14 @@ public class Operations {
 	
 	public static final String QMATRIX = "Q";
 	public static final String RMATRIX = "R";
-	public static final int ITERATIONS = 1000000;
-	
+	public static final int ITERATIONS = 10000000;
+
+	/**
+	 *
+	 * @param v1 vector 1
+	 * @param v2 vector 2
+	 * @return the dot product between 1 and 2
+	 */
 	public static double dotProduct(double[] v1, double[] v2) {
 
 		if (v1.length != v2.length)
@@ -29,6 +37,12 @@ public class Operations {
 
 	}
 
+	/**
+	 *
+	 * @param v1 vector
+	 * @param alpha scalar
+	 * @return the alpha product
+	 */
 	public static double[] alphaProduct(double[] v1, double alpha) {
 		double[] vaux = new double[v1.length];
 		for (int i = 0; i < v1.length; i++) {
@@ -37,6 +51,11 @@ public class Operations {
 		return vaux;
 	}
 
+	/**
+	 *
+	 * @param v vector
+	 * @return the norm 2 of the vector
+	 */
 	public static double getNorm2(double[] v) {
 		double sum = 0;
 		for (double d : v) {
@@ -44,7 +63,13 @@ public class Operations {
 		}
 		return Math.sqrt(sum);
 	}
-	
+
+	/**
+	 *
+	 * @param v1 vector 1
+	 * @param v2 vector 2
+	 * @return the sum between the vectors
+	 */
 	public static double[] sum(double[] v1, double[] v2){
 		if(v1.length!=v2.length)
 			throw new RuntimeException("Sum not valid");
@@ -56,6 +81,11 @@ public class Operations {
 		return aux;
 	}
 
+	/**
+	 * This method calculates the matrix Q and R using Gram-Schmidt
+	 * @param m the matrix to
+	 * @return a map with the qr descomposition
+	 */
 	public static Map<String,Matrix> calculateQR(Matrix m) {
 
 		Map<String,Matrix> ret = new HashMap<>();
@@ -89,50 +119,9 @@ public class Operations {
 		return calculateQR2iter(m, ITERATIONS);
 	}
 	
-	public static Matrix calculateQR2rec(final Matrix prev, final Matrix m, int iter){
-		//caso base
-		if(iter<=0)
-			return m;
-		//poda
-		if(iter%m.fil==0 && prev!=null && Operations.getValues(prev).equals(Operations.getValues(m))){
-			System.out.println(Operations.ITERATIONS-iter);
-			return m;
-		}
-		Matrix R = new Matrix(m);
-		
-		double[][] g = new double[m.fil-1][2];
-		
-		for(int x=0; x<m.fil-1; x++){
-			double x1 = R.getInPosition(x, x);
-			double x3 = R.getInPosition(x+1, x);
-			double r = Math.sqrt(Math.pow(x1, 2)+Math.pow(x3,2));
-			double c = x1/r;
-			double s = -x3/r;
-			g[x][0] = c;
-			g[x][1] = s;
-
-			for(int j=0;j<R.cols;j++){
-				double upper = R.getInPosition(x, j);
-				double lower = R.getInPosition(x+1, j);
-				R.setInPosition(c*upper-s*lower, x, j);
-				R.setInPosition(s*upper+c*lower, x+1, j);
-			}
-		}
-		for(int x=0; x<m.fil-1; x++){
-			for(int i=0; i<R.fil; i++){
-				double c = g[x][0];
-				double s = g[x][1];
-				double left = R.getInPosition(i, x);
-				double right = R.getInPosition(i, x+1);
-				R.setInPosition(left*c-right*s, i, x);
-				R.setInPosition(left*s+right*c, i, x+1);
-			}
-		}
-		return calculateQR2rec(m, R, iter-1);
-	}
-	
 	public static Matrix calculateQR2iter(Matrix m, int iter){
 		Matrix prev = null;
+		long start = System.currentTimeMillis();
 		double[][] g = new double[m.fil-1][2];
 		while(iter>0){
 			for(int x=0; x<m.fil-1; x++){
@@ -162,17 +151,24 @@ public class Operations {
 				}
 			}
 			if(iter%m.fil==0 && prev!=null){
-				System.out.println(Operations.ITERATIONS-iter);
+
 				if(Operations.getValues(m).equals(Operations.getValues(prev))){
+					Output.times(m.fil,System.currentTimeMillis() - start,ITERATIONS - iter);
 					return m;
 				}
 			}
 			prev = new Matrix(m);
 			iter--;
 		}
+		Output.times(m.fil,System.currentTimeMillis() - start,ITERATIONS - iter);
 		return m;
 	}
-	
+
+	/**
+	 * Calculate the eigenvalues from the given matrix
+	 * @param m The matrix
+	 * @return A list with the eigenvalues in complex form
+	 */
 	public static Set<Complex> getValues(Matrix m){
 		Set<Complex> val = new HashSet<>();
 		for (int i = 0; i < m.cols - (m.cols % 2); i += 2) {
@@ -188,7 +184,14 @@ public class Operations {
 		} 
 		return val;
 	}
-	
+
+	/**
+	 * Gets the root from the polinomial
+	 * @param a
+	 * @param b
+	 * @param c
+	 * @return A list with the roots
+	 */
 	private static List<Complex> roots(double a, double b, double c) {
 		List<Complex> res = new ArrayList<Complex>();
 		double x = (b * b) - (4 * a * c);
@@ -203,6 +206,11 @@ public class Operations {
 		return res;
 	}
 
+	/**
+	 *
+	 * @param m the matrix 2x2
+	 * @return the determinant
+	 */
 	private static double determinant(double[][] m) {
 		return m[0][0]*m[1][1]-m[0][1]*m[1][0];
 	}
@@ -210,17 +218,21 @@ public class Operations {
 	public static double truncateDouble(double n){
 		return truncateDouble(n,4);
 	}
-	
+
+	/**
+	 * Rounds the double for showing purpose
+	 * @param n the double
+	 * @param digits the number of digits
+	 * @return the new double with n decimals
+	 */
 	public static double truncateDouble(double n, int digits){
 		
 		if(digits<=0)
 			throw new RuntimeException("Invalid digit");
-		
-		double digit = Math.pow(10, digits);
-		double number = n;
-		int aux = (int) (number * digit);// 1243
-		double result = aux / digit;// 12.43
-		return result;
+
+		BigDecimal bd = new BigDecimal(n);
+		bd = bd.setScale(digits, RoundingMode.HALF_UP);
+		return bd.doubleValue();
 	}
 	
 	public static Matrix crossProduct(Matrix a, Matrix b){

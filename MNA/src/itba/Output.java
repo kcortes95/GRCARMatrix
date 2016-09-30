@@ -20,7 +20,7 @@ public class Output {
 		}
 	}
 	
-	public static void times(int n, long milis){
+	public static void times(int n, long milis, int iters){
 		if(n == 5){
 			try{
 				PrintWriter pw = new PrintWriter("times.txt");
@@ -30,7 +30,7 @@ public class Output {
 			}
 		}
 		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("times.txt", true)))) {
-			out.write(n + "\t" + milis + "\n");
+			out.write(n + "\t" + milis + "\t" + iters +  "\n");
 			out.close();
 		}catch (IOException e) {
 		    e.printStackTrace();
